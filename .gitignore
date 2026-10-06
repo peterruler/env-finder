@@ -1,0 +1,8 @@
+.venv/
+__pycache__/
+*.py[cod]
+.DS_Store
+# Lokale Konfiguration; die Beispielkonfiguration bleibt versionierbar.
+.env
+.env.*
+!.env.example

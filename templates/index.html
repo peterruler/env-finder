@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Env Finder</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script defer src="{{ url_for('static', filename='app.js') }}"></script>
+</head>
+<body>
+  <main>
+    <header><span class="logo">[ .env ]</span><span class="badge">LOKAL · NUR LESEN</span></header>
+    <section class="intro"><p class="eyebrow">DEINE PROJEKTE, AUF EINEN BLICK</p><h1>Finde deine<br><span>.env Dateien.</span></h1><p>Wähle einen Ordner. Finde Konfigurationsdateien und sieh ihre Inhalte direkt hier.</p></section>
+    <form id="search-form" class="panel">
+      <label for="directory">Suchverzeichnis</label>
+      <div class="directory-row"><input id="directory" value="{{ default }}" spellcheck="false" required aria-describedby="root-note"><button type="button" id="browse" class="secondary">Ordner auswählen</button></div>
+      <p id="selected-path" class="path-note">{{ display_default }}</p>
+      <div class="actions"><label class="checkbox"><input id="variants" type="checkbox"> Auch .env.* finden <span>(z. B. .env.local)</span></label><button id="search" type="submit">Dateien finden <span aria-hidden="true">↗</span></button></div>
+      <label class="checkbox search-limit"><input id="bounded" type="checkbox"> Suche auf 2 Minuten begrenzen</label>
+      <p id="root-note" class="path-note">Freigegebener Suchbereich: {{ display_root }}</p>
+    </form>
+    <section class="results" aria-labelledby="results-title"><div class="results-heading"><h2 id="results-title">Suchergebnisse</h2><span id="count" class="count">0 Dateien</span></div><p id="status" role="status" aria-live="polite">Bereit. Wähle einen Ordner und starte die Suche.</p><div id="warnings" role="alert"></div><div class="table-wrap"><table id="results-table" hidden><thead><tr><th>Datei / Pfad</th><th>Größe</th><th>Geändert</th><th><span class="sr-only">Aktion</span></th></tr></thead><tbody id="results-body"></tbody></table></div></section>
+    <footer>Die Inhalte deiner .env Dateien erscheinen unter dem jeweiligen Treffer. Dateien werden nur gelesen. Symbolische Links werden übersprungen.</footer>
+  </main>
+  <dialog id="picker"><div class="dialog-header"><h2>Ordner auswählen</h2><button type="button" id="close-picker" class="secondary" aria-label="Schließen">✕</button></div><p id="picker-path" class="picker-path"></p><button type="button" id="parent" class="secondary">↑ Übergeordneter Ordner</button><p id="picker-status" role="status"></p><ul id="folders"></ul><div class="dialog-footer"><button type="button" id="select-directory">Diesen Ordner verwenden</button></div></dialog>
+</body>
+</html>
