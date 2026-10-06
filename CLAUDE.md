@@ -34,6 +34,22 @@ Der konkrete persönliche Suchpfad wird auf ausdrücklichen Nutzerwunsch auch in
 
 > add a mit LICENSE
 
+### 2026-10-06 · Restart with the external search folder
+
+> restart app with path [lokaler Standard-Suchpfad]
+
+Den angeforderten Suchpfad ausschließlich in der lokalen `.env` setzen und die Docker-Anwendung auf der bisherigen URL neu starten. Persönliche Pfade bleiben im Protokoll durch Platzhalter ersetzt.
+
+### 2026-10-06 · Demo screenshot in README
+
+> add the env-finder.png as demo screen to the readme.md
+
+### 2026-10-06 · Consolidate README files
+
+> cleanuo the REDME.md the only existing file should be README.md
+
+Die kurze englische Anleitung in `README.md` zusammenführen, Demo-Screenshot und Lizenzverweis beibehalten und die doppelte Datei entfernen. Frühere Prompt-Einträge bleiben als Verlauf erhalten.
+
 ## Umsetzungsstand
 
 - „flash webserver“ wird als Flask-Webserver umgesetzt.
@@ -71,3 +87,10 @@ Der konkrete persönliche Suchpfad wird auf ausdrücklichen Nutzerwunsch auch in
 - Persönlichen Standardpfad aus `app.py` und `start.py` entfernt. Beide verwenden `settings.py`; das Docker-Image enthält den Loader, aber keine lokale `.env`.
 - 19 Tests bestanden, einschließlich Laden aus einem anderen Arbeitsverzeichnis, Umgebungsvariable und expliziter Pfadoptionen, fehlender Konfiguration sowie Docker-Pfadüberschreibung.
 - Der aus `.env` bestimmte Host-Pfad wird schreibgeschützt eingebunden. Aktualisierter Container: `env-finder-20261006-config`; Status `healthy`, URL weiterhin `http://127.0.0.1:50851`.
+
+## Neustart mit externem Suchbereich am 2026-10-06
+
+- `DEFAULT_SEARCH_FOLDER` ausschließlich in `.env` auf den angeforderten externen Suchbereich umgestellt.
+- Existenz und Lesbarkeit auf dem Host sowie den Docker-Zugriff vor dem Neustart geprüft.
+- Vorherigen Container ersetzt; aktueller Container: `env-finder-1791314599885658000`. Der Suchbereich ist schreibgeschützt eingebunden, die URL bleibt `http://127.0.0.1:50851`.
+- Healthcheck, Verzeichnis-API und voreingestellten Suchordner in der neu geladenen Browseroberfläche bestätigt.

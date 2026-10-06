@@ -22,8 +22,9 @@ Eine lokale Webanwendung findet `.env`-Dateien in einem vom Nutzer ausgewählten
 12. `python3.12 start.py --local` erstellt bei Bedarf `.venv`, installiert Abhängigkeiten und startet den Server im Vordergrund. `Ctrl+C` beendet den lokalen Server.
 13. Der Docker-Starter prüft die Bereitschaft des Webservers und gibt URL, Containername, Suchbereich und Stoppbefehl aus. Ein nicht erreichbarer Docker-Dienst führt zu einer verständlichen Fehlermeldung.
 14. Neue Nutzerprompts zum Projekt werden durch den bearbeitenden Coding-Agenten fortlaufend in `CLAUDE.md` ergänzt. Die dafür verbindlichen Projektanweisungen stehen in `CLAUDE.md` und `AGENTS.md`. Die Anwendung selbst erhält keine Chatprompts und protokolliert keine Browser-Suchanfragen als Prompts.
-15. `REDME.md` enthält eine kurze englische App-Beschreibung sowie Voraussetzungen, Installation/Konfiguration, lokale und Docker-Startbefehle, Stoppbefehle und die grundlegende Bedienung. Beispiele verwenden ausschließlich generische Pfade.
-16. Das Projekt verwendet die MIT-Lizenz. `LICENSE` enthält den vollständigen Lizenztext mit Copyright 2026 Peter Strössler; `README.md` und `REDME.md` verweisen darauf.
+15. `README.md` ist die einzige README-Datei des Projekts und enthält eine kurze englische App-Beschreibung sowie Voraussetzungen, Installation/Konfiguration, lokale und Docker-Startbefehle, Stoppbefehle und die grundlegende Bedienung. Beispiele verwenden ausschließlich generische Pfade.
+16. Das Projekt verwendet die MIT-Lizenz. `LICENSE` enthält den vollständigen Lizenztext mit Copyright 2026 Peter Strössler; `README.md` verweist darauf.
+17. `README.md` bindet `env-finder.png` als Demo-Screenshot mit einem relativen Bildpfad ein.
 
 ## Abnahme
 

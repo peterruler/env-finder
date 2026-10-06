@@ -1,89 +1,77 @@
 # Env Finder
 
-Findet `.env`-Dateien rekursiv über eine deutsche Flask-Weboberfläche mit Ordnerpicker und zeigt ihre Inhalte direkt unter den Treffern an. Das Standardverzeichnis wird ausschließlich in der lokalen `.env` konfiguriert.
+A local Flask app that finds `.env` files recursively and displays their contents in a browser. Choose a folder, optionally include `.env.*` files, and copy file paths. Files are opened read-only.
 
-## Standardverzeichnis konfigurieren
+## Demo
 
-Anwendung und Starter lesen `DEFAULT_SEARCH_FOLDER` aus der `.env` im Projektverzeichnis:
+![Env Finder demo screenshot](env-finder.png)
+
+## Install and configure
+
+Requirements: **Python 3.12**. For Docker mode, also install and start Docker Desktop or Docker Engine. The commands below work on macOS and Linux.
+
+Download or clone the project, then open a terminal in its directory. Create the configuration if it does not already exist:
+
+```sh
+test -f .env || cp .env.example .env
+```
+
+Edit `.env` and set an existing folder:
 
 ```dotenv
-DEFAULT_SEARCH_FOLDER=/pfad/zu/projekten
+DEFAULT_SEARCH_FOLDER=/path/to/your/projects
 ```
 
-Das Beispiel oben ist ein Platzhalter. `.env` ist bereits mit dem lokalen Pfad eingerichtet und wird von Git ignoriert. `.env.example` enthält eine versionierbare Vorlage mit einem generischen Beispiel. Nach einem frischen Checkout zuerst `cp .env.example .env` ausführen und den Beispielpfad durch ein existierendes Verzeichnis ersetzen. Bei Änderungen an `.env` die Anwendung neu starten; im Docker-Betrieb den bisherigen Container stoppen und mit `python3.12 start.py --docker -d` neu erstellen.
+The example path is a placeholder. `.env` is ignored by Git; `.env.example` is the shared template.
 
-Eine gesetzte Umgebungsvariable `DEFAULT_SEARCH_FOLDER` überschreibt den Wert aus der Datei; `--root` überschreibt beide. Anführungszeichen und Kommentare sind in der Konfiguration möglich. Relative Konfigurationspfade beziehen sich auf das Projektverzeichnis. Ohne konfigurierte Vorgabe ist ein explizites `--root` erforderlich. Der persönliche Standardpfad ist nicht im Python-Code enthalten. Docker erhält den konfigurierten Ordner als Mount; die lokale `.env` wird nicht ins Image kopiert.
+An environment variable `DEFAULT_SEARCH_FOLDER` overrides the file; `--root` overrides both. Relative paths in the configuration refer to the project directory. Restart the app after changing its configuration.
 
-## Docker starten
-
-Voraussetzungen: Docker Desktop läuft; `python3.12` ist installiert.
-
-```sh
-python3.12 start.py --docker -d
-```
-
-Der Starter baut `env-finder:local`, startet den Container im Hintergrund und gibt die URL aus. Standard ist **http://127.0.0.1:5000**. Ist Port 5000 belegt, wird ein anderer freier Port verwendet. `python3.12 start.py` führt denselben Docker-Start aus.
-
-Ein anderer Suchbereich mit einem vorausgewählten Unterordner:
-
-```sh
-python3.12 start.py --docker -d \
-  --root /pfad/zu \
-  --directory /pfad/zu/projekten
-```
-
-Der Picker kann innerhalb von `--root` navigieren. Docker erhält diesen Ordner als schreibgeschützten Bind-Mount. Der Host muss diesen Bereich für Docker freigegeben haben. Eingabefeld, Picker und Suchergebnisse verwenden die Originalpfade des Hosts. Ein anderer Host-Ordner erfordert einen Neustart mit entsprechendem `--root`.
-
-Die Ausgabe enthält den individuellen Containernamen. Jeder Starteraufruf erzeugt einen neuen Container:
-
-```sh
-docker ps --filter ancestor=env-finder:local
-docker logs CONTAINERNAME
-docker stop CONTAINERNAME
-docker rm CONTAINERNAME
-```
-
-Nach einem Docker-Neustart laufen nicht ausdrücklich gestoppte Container automatisch weiter (`unless-stopped`).
-
-## Lokal mit Python 3.12 und venv
+## Run locally
 
 ```sh
 python3.12 start.py --local
 ```
 
-Erstellt `.venv`, installiert Flask und Waitress und startet den Server. Mit `Ctrl+C` beenden. `--root`, `--directory` und `--port` funktionieren auch lokal. Die tatsächliche URL wird beim Start angezeigt.
+This creates a Python 3.12 `.venv`, installs the dependencies, and starts the app. Press **Ctrl+C** to stop it.
 
-Manuelle Einrichtung:
+## Run with Docker
 
 ```sh
-python3.12 -m venv .venv
-.venv/bin/python -m pip install -r requirements.txt
-.venv/bin/python app.py
+python3.12 start.py --docker -d
 ```
 
-`app.py` verwendet bei Bedarf die Umgebungsvariablen `ENV_FINDER_ROOT` und `ENV_FINDER_DEFAULT` für Suchbereich und Startverzeichnis; `ENV_FINDER_HOST_ROOT` steuert die angezeigte Host-Pfadwurzel im Container.
+This builds the image and starts a background container with the configured folder mounted read-only. The terminal prints the container name and stop command:
 
-## Verwendung
+```sh
+docker stop CONTAINER_NAME
+```
 
-1. Angezeigte URL im Browser öffnen.
-2. „Ordner auswählen“ anklicken, einen Ordner öffnen und „Diesen Ordner verwenden“ wählen. Alternativ einen absoluten Serverpfad oder einen Pfad relativ zum freigegebenen Suchbereich eingeben.
-3. Bei Bedarf „Auch .env.* finden“ aktivieren.
-4. „Dateien finden“ anklicken. Unter jedem Treffer werden die Dateiinhalte automatisch angezeigt; mit „Dateiinhalt“ lässt sich der Textbereich einklappen. Bei Bedarf die gefundenen Pfade kopieren.
+Replace `CONTAINER_NAME` with the printed name. Each launch creates a new container; stop the previous one before starting another. After changing `.env`, recreate the container to use the new folder.
 
-Dateien werden ausschließlich gelesen. Die Inhaltsanzeige ist auf 1 MiB pro Datei begrenzt; bei größeren Dateien erscheint ein Hinweis. UTF-8-BOM wird entfernt, ungültige UTF-8-Zeichen werden mit Hinweis ersetzt. Inhalte werden als reiner Text dargestellt. Leere Dateien und Lesefehler werden beim jeweiligen Treffer angezeigt. Das Nachladen läuft mit höchstens vier gleichzeitigen Inhaltsanfragen.
+## Use the app
 
-Alle Unterverzeichnisse werden durchsucht, einschließlich versteckter Ordner. Symbolische Links werden übersprungen. Die Suche läuft standardmäßig ohne Zeitlimit; bei großen Verzeichnissen kann sie mehrere Minuten dauern. Optional lässt sie sich mit „Suche auf 2 Minuten begrenzen“ auf 120 Sekunden begrenzen. Nicht lesbare Dateien/Ordner sowie eine Begrenzung auf 120 Sekunden bzw. 10.000 Treffer werden angezeigt. Eine begrenzte Suche liefert ein gekennzeichnetes Teilergebnis.
+Open the URL printed in the terminal. Port **5000** is preferred; a free port is selected automatically if it is occupied.
 
-## Tests und Projektdokumente
+Click **Ordner auswählen** to choose a folder within the configured search area, then **Dateien finden**. File contents appear beneath each result and can be collapsed. Large searches may take several minutes; an optional checkbox limits the search to two minutes.
+
+To use another search area for one launch:
+
+```sh
+python3.12 start.py --local --root /path/to/another/folder
+```
+
+Content display is limited to 1 MiB per file. Symbolic links are skipped, and any incomplete results or read errors are identified in the interface.
+
+## Tests
+
+After installing the local dependencies:
 
 ```sh
 .venv/bin/python -m unittest discover -s tests -v
 ```
 
-`SPEC.md` enthält Anforderungen und Abnahmekriterien. `CLAUDE.md` enthält das fortlaufende Nutzerprompt-Protokoll. `AGENTS.md` und `CLAUDE.md` weisen Coding-Agenten an, neue Projektprompts und geänderte Anforderungen bei jeder weiteren Bearbeitung einzutragen.
+See `SPEC.md` for the specification and `CLAUDE.md` for the project prompt history.
 
-Technische Referenzen: [Flask-Installation](https://flask.palletsprojects.com/en/stable/installation/), [Docker-Container starten](https://docs.docker.com/reference/cli/docker/container/run/), [Docker Bind-Mounts](https://docs.docker.com/engine/storage/bind-mounts/).
+## License
 
-## Lizenz
-
-Das Projekt steht unter der [MIT-Lizenz](LICENSE).
+Licensed under the [MIT License](LICENSE).
